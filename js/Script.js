@@ -83,5 +83,60 @@ async function getWeather(defaultCity) {
     }
 }
 
+const themes = {
+    vampire: {
+        useImage: true,
+        imagePath: "images/redMoon.jpg", 
+        targetId: "cardSunset",
+        accent: "border-red-500 bg-red-500/20"
+    },
+    human: {
+        useImage: true,
+        imagePath: "images/clear.jpg",
+        targetId: "cardSunrise",
+        accent: "border-yellow-400 bg-yellow-500/30"
+    },
+    gloom: {
+        useImage: true,
+        imagePath: "images/cloud.jpg", 
+        targetId: "cardWind",
+        accent: "border-purple-400 bg-purple-500/20"
+    }
+};
+
+function setTheme(themeName) {
+    const t = themes[themeName];
+    if (!t) return;
+    
+    const body = document.body;
+    
+    // All themes use background images
+    body.style.backgroundImage = `url('${t.imagePath}')`;
+    body.style.backgroundSize = 'cover';
+    body.style.backgroundPosition = 'center';
+    body.style.backgroundAttachment = 'fixed';
+
+    // Reset all cards
+    ['cardWind', 'cardSunrise', 'cardSunset'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) {
+            el.classList.remove('border-red-500', 'bg-red-500/20', 'border-yellow-400', 'bg-yellow-500/30', 'border-purple-400', 'bg-purple-500/20');
+            el.classList.add('border-transparent');
+        }
+    });
+
+    // Highlight active card
+    const activeCard = document.getElementById(t.targetId);
+    if (activeCard) {
+        activeCard.classList.remove('border-transparent');
+        activeCard.classList.add(...t.accent.split(' '));
+    }
+}
+
+
+
+// Start standaard in Human mode
+setTheme('human');
+
 // 3. STARTUP CALL
 getWeather("Genk");

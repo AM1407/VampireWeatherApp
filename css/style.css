@@ -1,7 +1,4 @@
 body {
-    /* Make sure you have a generic backup color if image fails */
-    background-color: #1e3a8a;
-    background-image: url('../images/clear.jpg');
     background-size: cover;
     background-position: center;
     background-attachment: fixed;
