@@ -1,10 +1,12 @@
 body {
-    background-image:url(../images/clear.jpg);
+    /* Make sure you have a generic backup color if image fails */
+    background-color: #1e3a8a;
+    background-image: url('../images/clear.jpg');
     background-size: cover;
     background-position: center;
     background-attachment: fixed;
-    transition: background-image 0.5s ease-in-out; 
-    }
+    transition: background-image 0.5s ease-in-out;
+}
 
 .glass {
     background: rgba(20, 20, 30, 0.6);
@@ -12,4 +14,4 @@ body {
     -webkit-backdrop-filter: blur(12px);
     border: 1px solid rgba(255, 255, 255, 0.1);
     box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
-    }
+}
