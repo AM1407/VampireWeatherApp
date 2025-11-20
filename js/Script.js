@@ -32,6 +32,9 @@ async function getWeather() {
     const apiKey = 'bac320f5ccfe6ea836c14d2c23cb79f7';
     const url = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=metric`;
 
+    const iconCode = data.weather[0].icon;
+    const iconUrl = `https://openweathermap.org/img/wn/${iconCode}@4x.png`;
+
     try {
         const response = await fetch(url);
         if (!response.ok) {
@@ -48,6 +51,8 @@ async function getWeather() {
         document.getElementById('windBox').innerText = data.wind.speed + " m/s";
         document.getElementById('feelsLike').innerText = Math.round(data.main.feels_like) + "°C";
 
+        document.getElementById('weatherIcon').innerHTML = `<img src="${iconUrl}" alt="Weather Icon" class="w-32 h-32 mx-auto">`;
+
         document.getElementById('timeZone').innerText = new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
 
         const sunriseTime = new Date(data.sys.sunrise * 1000).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
@@ -59,3 +64,4 @@ async function getWeather() {
         console.error("Error:", error);
     }
 }
+
