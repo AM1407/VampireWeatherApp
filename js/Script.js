@@ -61,7 +61,10 @@ async function getWeather(defaultCity) {
         document.getElementById('timeZone').innerText = new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
 
         const sunriseTime = new Date(data.sys.sunrise * 1000).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
-        document.getElementById('sunBox').innerText = sunriseTime;
+        const sunsetTime = new Date(data.sys.sunset * 1000).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+
+        document.getElementById('sunriseBox').innerText = sunriseTime;
+        document.getElementById('sunsetBox').innerText = sunsetTime;
 
         // 4. Dynamic Icon
         const iconCode = data.weather[0].icon;
