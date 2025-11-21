@@ -180,6 +180,6 @@ function determineSurferMood(temp) {
     return "Sweating like a sinner in church. 🥵";
 }
 
-// Initialize with default theme and city
+// Initialize with default theme and city.
 setTheme('gardener');
 getWeather("Genk");
