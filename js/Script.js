@@ -31,8 +31,10 @@ async function getWeather(defaultCity) {
         document.getElementById('tempBox').innerText = Math.round(data.main.temp);
 
         document.getElementById('humidityBox').innerText = data.main.humidity;
+        const windDir = getCompassDirection(data.wind.deg);
         document.getElementById('windBox').innerText = data.wind.speed;
-        document.getElementById('windDirection').innerText = data.wind.deg + "°";
+        document.getElementById('windDirection').innerText = windDir;
+
 
 
         const desc = data.weather[0].description;
@@ -152,6 +154,19 @@ function setTheme(themeName) {
     }
 }
 
+
+// Helper: Converts degrees (360) to compass direction (N, NE, etc.)
+function getCompassDirection(degrees) {
+    const directions = ['N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW'];
+
+    // 1. Divide degrees by 45 (360 / 8 = 45)
+    // 2. Round to nearest whole number
+    // 3. Use % 8 (Modulo) so 360 wraps back to 0 (North)
+    const index = Math.round(degrees / 45) % 8;
+
+    return directions[index];
+}
+
 // Gardener mood based on temperature
 function determinePlantMood(temp) {
     if (temp < 0) return "Everything is frozen solid. RIP. 💀";
@@ -180,6 +195,6 @@ function determineSurferMood(temp) {
     return "Sweating like a sinner in church. 🥵";
 }
 
-// Initialize with default theme and city.
+// Initialize with default theme and city
 setTheme('gardener');
 getWeather("Genk");
