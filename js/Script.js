@@ -1,23 +1,22 @@
-// GLOBAL STATE: Track the current theme
+// starting theme
 let currentTheme = 'gardener';
 
-// 1. EVENT LISTENERS
+// Event listener for Enter key in search bar
 document.getElementById('searchBar').addEventListener('keypress', function (e) {
     if (e.key === 'Enter') {
         getWeather().catch(console.error);
     }
 });
 
-// 2. MAIN FUNCTION
+// Function to fetch and display weather data
 async function getWeather(defaultCity) {
     const searchInput = document.getElementById('searchBar');
-    const city = defaultCity || searchInput.value;
-
+    const city = defaultCity || searchInput.value.trim();
     if (!city) return;
-
+// OpenWeatherMap API key and URL
     const apiKey = 'bac320f5ccfe6ea836c14d2c23cb79f7';
     const url = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=metric`;
-
+// Fetch weather data
     try {
         const response = await fetch(url);
         if (!response.ok) {
@@ -27,38 +26,37 @@ async function getWeather(defaultCity) {
 
         const data = await response.json();
 
-        // --- INJECT STANDARD DATA ---
+
         document.getElementById('placeName').innerText = data.name;
         document.getElementById('tempBox').innerText = Math.round(data.main.temp);
 
         document.getElementById('humidityBox').innerText = data.main.humidity;
         document.getElementById('windBox').innerText = data.wind.speed;
+        document.getElementById('windDirection').innerText = data.wind.deg + "°";
 
-        // Description
+
         const desc = data.weather[0].description;
         document.getElementById('conditionText').innerText = desc.charAt(0).toUpperCase() + desc.slice(1);
 
-        // Time Strings
+
         document.getElementById('timeZone').innerText = new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
 
-        // Calculate Standard Times
+
         const standardSunrise = new Date(data.sys.sunrise * 1000).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
         const standardSunset = new Date(data.sys.sunset * 1000).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
 
-        // Inject the TIME (The numbers)
+
         document.getElementById('sunriseBox').innerText = standardSunrise;
         document.getElementById('sunsetBox').innerText = standardSunset;
 
 
-        // --- THEME LOGIC ---
-
-        // A. Setup Defaults
+// Theme-specific adjustments
         let sunriseTitleText = "Sunrise";
         let sunsetTitleText = "Sunset";
         // Default content for 'Feels Like' is just the number
         let feelsLikeContent = Math.round(data.main.feels_like);
 
-        // B. Check the theme
+
         if (currentTheme === 'vampire') {
             sunriseTitleText = 'Time to Coffin ⚰️';
             sunsetTitleText = 'Feast Time 🩸';
@@ -68,8 +66,7 @@ async function getWeather(defaultCity) {
             sunriseTitleText = 'Start Planting 🧄';
             sunsetTitleText = 'Take out the Wooden Stakes 🪓';
 
-            // Logic: Calculate Plant Mood based on actual temperature
-            // We pass 'data.main.temp' to the helper function
+
             feelsLikeContent = determinePlantMood(data.main.temp);
         }
         else if (currentTheme === 'surfer') {
@@ -78,27 +75,27 @@ async function getWeather(defaultCity) {
             feelsLikeContent = determineSurferMood(data.main.temp);
         }
 
-        // C. Inject the Custom Text
+
         document.getElementById('sunriseLabel').innerText = sunriseTitleText;
         document.getElementById('sunsetLabel').innerText = sunsetTitleText;
         document.getElementById('feelsLike').innerText = feelsLikeContent;
 
 
-        // Dynamic Icon
+// Set weather icon
         const iconCode = data.weather[0].icon;
         const iconUrl = `https://openweathermap.org/img/wn/${iconCode}@4x.png`;
         document.getElementById('weatherIcon').innerHTML = `<img src="${iconUrl}" alt="Weather Icon" class="w-40 h-40 mx-auto drop-shadow-lg">`;
-
+// Clear search input if default city was used
         if (!defaultCity) {
             searchInput.value = "";
         }
-
+// Log data for debugging
     } catch (error) {
         console.error("Error:", error);
     }
 }
 
-// 3. THEME SYSTEM
+// Theme definitions
 const themes = {
     vampire: {
         imagePath: "images/redMoon.jpg",
@@ -116,19 +113,19 @@ const themes = {
         accent: "border-blue-400 bg-blue-500/20"
     }
 };
-
+// Function to set the theme
 function setTheme(themeName) {
     currentTheme = themeName;
     const t = themes[themeName];
     if (!t) return;
 
-    // 1. Background Image
+// Set background image
     document.body.style.backgroundImage = `url('${t.imagePath}')`;
     document.body.style.backgroundSize = 'cover';
     document.body.style.backgroundPosition = 'center';
     document.body.style.backgroundAttachment = 'fixed';
 
-    // 2. Reset Cards
+// Reset all cards to default classes
     ['cardWind', 'cardSunrise', 'cardSunset'].forEach(id => {
         const el = document.getElementById(id);
         if (el) {
@@ -140,7 +137,7 @@ function setTheme(themeName) {
         }
     });
 
-    // 3. Highlight active card
+// Highlight the active card
     const activeCard = document.getElementById(t.targetId);
     if (activeCard) {
         activeCard.classList.remove('border-white/5');
@@ -148,14 +145,14 @@ function setTheme(themeName) {
         activeCard.classList.add(...classes);
     }
 
-    // 4. Refresh text
+// Refresh weather data for current city
     const currentCity = document.getElementById('placeName').innerText;
     if(currentCity !== "---") {
         getWeather(currentCity);
     }
 }
 
-// 4. HELPER FUNCTIONS (Moved outside!)
+// Gardener mood based on temperature
 function determinePlantMood(temp) {
     if (temp < 0) return "Everything is frozen solid. RIP. 💀";
     if (temp < 5) return "My carrot is shrinking 🥕";
@@ -164,7 +161,7 @@ function determinePlantMood(temp) {
     if (temp < 28) return "Tomatoes are turning red! 🍅";
     return "Lettuce is on fire! Harvest now! 🥵";
 }
-
+// Vampire mood based on temperature
 function determineVampireMood(temp) {
     if (temp < 0) return "My blood slushie is frozen solid 🍧";
     if (temp < 10) return "Lovely coffin weather. Chill to the bone ⚰️";
@@ -173,7 +170,7 @@ function determineVampireMood(temp) {
     if (temp < 100) return "I am turning to ash! Hiss! 🔥";
     return "Holy water steam bath! ✝️";
 }
-
+// Surfer mood based on temperature
 function determineSurferMood(temp) {
     if (temp < 0) return "Significant shrinkage warning. 🍤";
     if (temp < 10) return "Wetsuit smells like pee, but at least it's warm. 🚽";
@@ -183,6 +180,6 @@ function determineSurferMood(temp) {
     return "Sweating like a sinner in church. 🥵";
 }
 
-// Start in Gardener mode
+// Initialize with default theme and city
 setTheme('gardener');
 getWeather("Genk");
