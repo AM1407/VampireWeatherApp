@@ -30,7 +30,7 @@ async function getWeather(defaultCity) {
         // --- INJECT STANDARD DATA ---
         document.getElementById('placeName').innerText = data.name;
         document.getElementById('tempBox').innerText = Math.round(data.main.temp);
-        document.getElementById('feelsLike').innerText = Math.round(data.main.feels_like);
+
         document.getElementById('humidityBox').innerText = data.main.humidity;
         document.getElementById('windBox').innerText = data.wind.speed;
 
@@ -50,26 +50,16 @@ async function getWeather(defaultCity) {
         document.getElementById('sunsetBox').innerText = standardSunset;
 
 
-        // --- THEME LOGIC FOR TEXT LABELS ---
+        // --- THEME LOGIC ---
 
-        // 1. Define default values (FIX: Added quotes!)
+        // A. Setup Defaults
         let sunriseTitleText = "Sunrise";
         let sunsetTitleText = "Sunset";
-
+        // Default content for 'Feels Like' is just the number
         let feelsLikeContent = Math.round(data.main.feels_like);
 
-        function bepaalPlantenHumeur(temp) {
-        if (temp < 0) return "Alles is dood. RIP. 💀";
-        if (temp < 5) return "Wortels bibberen 🥕";
-        if (temp < 15) return "Jas aan. Wied-weer 🧤";
-        if (temp < 22) return "Groeizaam! Slakken feest 🐌";
-        if (temp < 28) return "Tomaten worden rood! 🍅";
-        return "Sla schiet door! Oogsten! 🥵";
-        }
-
-        // 2. Check the theme
+        // B. Check the theme
         if (currentTheme === 'vampire') {
-
             sunriseTitleText = 'Time to Coffin ⚰️';
             sunsetTitleText = 'Feast Time 🩸';
         }
@@ -77,16 +67,16 @@ async function getWeather(defaultCity) {
             sunriseTitleText = 'Start Planting 🧄';
             sunsetTitleText = 'Rest Time 💤';
 
-            feelsLikeContent = bepaalPlantenHumeur(realTemp);
+            // Logic: Calculate Plant Mood based on actual temperature
+            // We pass 'data.main.temp' to the helper function
+            feelsLikeContent = bepaalPlantenHumeur(data.main.temp);
         }
         else if (currentTheme === 'surfer') {
             sunriseTitleText = 'Catch Rays ☀️';
             sunsetTitleText = 'Stash Board 🏄‍♂️';
         }
 
-        // 3. Inject the LABELS into the HTML
-        // FIX: Removed the 'finalSunrise' lines that were crashing the code
-        // FIX: Changed ID to 'sunriseLabel' to match your HTML
+        // C. Inject the Custom Text
         document.getElementById('sunriseLabel').innerText = sunriseTitleText;
         document.getElementById('sunsetLabel').innerText = sunsetTitleText;
         document.getElementById('feelsLike').innerText = feelsLikeContent;
@@ -107,7 +97,6 @@ async function getWeather(defaultCity) {
 }
 
 // 3. THEME SYSTEM
-// I updated the keys to match your HTML buttons: gardener & surfer
 const themes = {
     vampire: {
         imagePath: "images/redMoon.jpg",
@@ -137,18 +126,14 @@ function setTheme(themeName) {
     document.body.style.backgroundPosition = 'center';
     document.body.style.backgroundAttachment = 'fixed';
 
-    // 2. Reset Cards (The Fix is Here!)
+    // 2. Reset Cards
     ['cardWind', 'cardSunrise', 'cardSunset'].forEach(id => {
         const el = document.getElementById(id);
         if (el) {
-            // Default styling for most cards
             let newClass = "glass rounded-[2rem] p-6 flex flex-col justify-center gap-4 flex-1 hover:bg-white/5 transition border border-white/5 relative overflow-hidden";
-
-            // SPECIAL CASE: Wind, Sunrise, and Sunset need to be Side-by-Side (Row), not Stacked (Col)
             if (id === 'cardWind' || id === 'cardSunrise' || id === 'cardSunset') {
                 newClass = "glass rounded-2xl p-4 flex items-center justify-between transition border border-white/5 relative overflow-hidden";
             }
-
             el.className = newClass;
         }
     });
@@ -168,6 +153,16 @@ function setTheme(themeName) {
     }
 }
 
-// Start in Vampire mode
+// 4. HELPER FUNCTIONS (Moved outside!)
+function bepaalPlantenHumeur(temp) {
+    if (temp < 0) return "Alles is dood. RIP. 💀";
+    if (temp < 5) return "Wortels bibberen 🥕";
+    if (temp < 15) return "Jas aan. Wied-weer 🧤";
+    if (temp < 22) return "Groeizaam! Slakken feest 🐌";
+    if (temp < 28) return "Tomaten worden rood! 🍅";
+    return "Sla schiet door! Oogsten! 🥵";
+}
+
+// Start in Gardener mode
 setTheme('gardener');
 getWeather("Genk");
