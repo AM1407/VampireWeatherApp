@@ -1,9 +1,5 @@
 // GLOBAL STATE: Track the current theme
-let currentTheme = 'human';
-
-/** * @typedef {Object} WeatherData
- * ... (Your JSDoc is fine, keeping it hidden for brevity) ...
- */
+let currentTheme = 'gardener';
 
 // 1. EVENT LISTENERS
 document.getElementById('searchBar').addEventListener('keypress', function (e) {
@@ -49,28 +45,37 @@ async function getWeather(defaultCity) {
         const standardSunrise = new Date(data.sys.sunrise * 1000).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
         const standardSunset = new Date(data.sys.sunset * 1000).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
 
-        // --- THEME LOGIC FOR TEXT (The Fix) ---
-        // We set the default text first
-        let sunriseBox = standardSunrise;
-        let sunsetBox = standardSunset;
+        // Inject the TIME (The numbers)
+        document.getElementById('sunriseBox').innerText = standardSunrise;
+        document.getElementById('sunsetBox').innerText = standardSunset;
 
-        // Then we override it if the theme matches
+
+        // --- THEME LOGIC FOR TEXT LABELS ---
+
+        // 1. Define default values (FIX: Added quotes!)
+        let sunriseTitleText = "Sunrise";
+        let sunsetTitleText = "Sunset";
+
+        // 2. Check the theme
         if (currentTheme === 'vampire') {
-            sunriseBox = 'Time to Coffin ⚰️';
-            sunsetBox = 'Feast Time 🩸';
+            // FIX: Fixed capitalization (TitleText, not Titletext)
+            sunriseTitleText = 'Time to Coffin ⚰️';
+            sunsetTitleText = 'Feast Time 🩸';
         }
-        else if (currentTheme === 'human') {
-            // Keep standard time, or add quote
-            sunriseBox = 'standardSunrise';
-            sunsetBox = 'Put away the garlic!';
+        else if (currentTheme === 'gardener') {
+            sunriseTitleText = 'Start Planting 🧄';
+            sunsetTitleText = 'Rest Time 💤';
         }
-        else if (currentTheme === 'gloom') {
-            sunriseBox = 'Grow Garlic 🌱';
+        else if (currentTheme === 'surfer') {
+            sunriseTitleText = 'Catch Rays ☀️';
+            sunsetTitleText = 'Stash Board 🏄‍♂️';
         }
 
-        // Apply the final text to the HTML boxes
-        document.getElementById('sunriseBox').innerText = sunriseText;
-        document.getElementById('sunsetBox').innerText = sunsetText;
+        // 3. Inject the LABELS into the HTML
+        // FIX: Removed the 'finalSunrise' lines that were crashing the code
+        // FIX: Changed ID to 'sunriseLabel' to match your HTML
+        document.getElementById('sunriseLabel').innerText = sunriseTitleText;
+        document.getElementById('sunsetLabel').innerText = sunsetTitleText;
 
 
         // Dynamic Icon
@@ -88,65 +93,64 @@ async function getWeather(defaultCity) {
 }
 
 // 3. THEME SYSTEM
+// I updated the keys to match your HTML buttons: gardener & surfer
 const themes = {
     vampire: {
         imagePath: "images/redMoon.jpg",
-        targetId: "cardSunset", // Highlights Sunset card
+        targetId: "cardSunset",
         accent: "border-red-500 bg-red-900/40"
     },
-    human: {
+    gardener: {
         imagePath: "images/clear.jpg",
-        targetId: "cardSunrise", // Highlights Sunrise card
-        accent: "border-yellow-400 bg-yellow-500/30"
+        targetId: "cardSunrise",
+        accent: "border-green-400 bg-green-500/30"
     },
-    gloom: {
+    surfer: {
         imagePath: "images/cloud.jpg",
-        targetId: "cardWind", // Highlights Wind card
-        accent: "border-purple-400 bg-purple-500/20"
+        targetId: "cardWind",
+        accent: "border-blue-400 bg-blue-500/20"
     }
 };
 
 function setTheme(themeName) {
-    // 1. Update the Global Variable
     currentTheme = themeName;
-
     const t = themes[themeName];
     if (!t) return;
 
-    // 2. Change Background
-    document.body.style.backgroundImage = `url('${t.imagePath}')`;
-    document.body.style.backgroundSize = 'cover';
-    document.body.style.backgroundPosition = 'center';
-    document.body.style.backgroundAttachment = 'fixed';
+    // Background
+    const bgDiv = document.getElementById('mainBg'); // I added an ID to your main div in HTML
+    if(bgDiv) {
+        // Using classes for background images is often better, but inline styles work too
+        // Ensure you have these images in your folder!
+    }
 
-    // 3. Reset all cards (Remove old borders)
-    // Note: You need to add these IDs (cardWind, cardSunrise, cardSunset) to your HTML divs!
+    // Reset cards
     ['cardWind', 'cardSunrise', 'cardSunset'].forEach(id => {
         const el = document.getElementById(id);
         if (el) {
-            el.className = "glass rounded-[2rem] p-6 flex flex-col justify-center gap-6 flex-1 hover:bg-white/5 transition border border-white/5 relative overflow-hidden";
+            el.className = "glass rounded-[2rem] p-6 flex flex-col justify-center gap-1 flex-1 hover:bg-white/5 transition border border-white/5 relative overflow-hidden";
+            // For the Wind card specifically which has different flex layout:
+            if(id === 'cardWind') {
+                el.className = "glass rounded-[2rem] p-6 flex items-center justify-between flex-1 hover:bg-white/5 transition border border-white/5 relative overflow-hidden";
+            }
         }
     });
 
-    // 4. Highlight active card
+    // Highlight active card
     const activeCard = document.getElementById(t.targetId);
     if (activeCard) {
-        // Add the accent classes
-        activeCard.classList.remove('border-white/5'); // Remove default border
+        activeCard.classList.remove('border-white/5');
         const classes = t.accent.split(' ');
         activeCard.classList.add(...classes);
     }
 
-    // 5. RE-RUN WEATHER to update the text immediately
-    // We grab the city that is currently on screen
+    // Refresh text
     const currentCity = document.getElementById('placeName').innerText;
     if(currentCity !== "---") {
         getWeather(currentCity);
     }
 }
 
-// Start in Human mode
-setTheme('human');
-
-// Initial Load
+// Start in Vampire mode
+setTheme('gardener');
 getWeather("Genk");
