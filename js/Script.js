@@ -90,13 +90,13 @@ const themes = {
         targetId: "cardSunset",
         accent: "border-red-500 bg-red-500/20"
     },
-    human: {
+    gardener: {
         useImage: true,
         imagePath: "images/clear.jpg",
         targetId: "cardSunrise",
         accent: "border-yellow-400 bg-yellow-500/30"
     },
-    gloom: {
+    surfer: {
         useImage: true,
         imagePath: "images/cloud.jpg", 
         targetId: "cardWind",
