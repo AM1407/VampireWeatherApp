@@ -6,10 +6,12 @@
     <title>WeatherApp</title>
     <!--tailwind-->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!--custom css-->
-    <link rel="stylesheet" href="css/style.css">
+
     <!--adobe font-->
     <link rel="stylesheet" href="https://use.typekit.net/ltj6gpl.css">
+
+    <!--custom css-->
+    <link rel="stylesheet" href="css/style.css">
 
     <script>
         tailwind.config = {
@@ -101,11 +103,11 @@
                     </div>
                 </div>
 
-                <div class="glass rounded-[2rem] p-6 flex flex-col justify-center gap-1 flex-1 hover:bg-white/5 transition border border-white/5 relative overflow-hidden">
+                <div id="boxSun" class="glass rounded-[2rem] p-6 flex flex-col justify-center gap-1 flex-1 hover:bg-white/5 transition border border-white/5 relative overflow-hidden">
 
                     <div id="cardSunrise" class="flex items-center justify-between z-10 p-2 rounded-xl transition-all duration-300 border border-transparent md:mt-10 ">
                         <div class="flex flex-col">
-                            <span class="text-gray-400 font-medium text-xs uppercase tracking-wider mb-1">Sunrise</span>
+                            <span class="text-gray-400 font-small text-xs uppercase tracking-wider mb-1">Sunrise</span>
                             <span class="text-3xl font-bold" id="sunriseBox">--:--</span>
                         </div>
                         <div class="bg-yellow-500/20 p-3 rounded-2xl">
@@ -117,7 +119,7 @@
 
                     <div id="cardSunset" class="flex items-center justify-between z-10 p-2 rounded-xl transition-all duration-300 border border-transparent md:mb-10">
                         <div class="flex flex-col">
-                            <span class="text-gray-400 font-medium text-xs uppercase tracking-wider mb-1">Sunset</span>
+                            <span class="text-gray-400 font-small text-xs uppercase tracking-wider mb-1">Sunset</span>
                             <span class="text-3xl font-bold" id="sunsetBox">--:--</span>
                         </div>
                         <div class="bg-indigo-500/20 p-3 rounded-2xl">

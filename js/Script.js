@@ -1,17 +1,8 @@
-/**
- * @typedef {Object} WeatherData
- * @property {string} name
- * @property {Object} main
- * @property {number} main.temp
- * @property {number} main.humidity
- * @property {number} main.feels_like
- * @property {Object} wind
- * @property {number} wind.speed
- * @property {Array} weather
- * @property {string} weather.0.description
- * @property {string} weather.0.icon
- * @property {Object} sys
- * @property {number} sys.sunrise
+// GLOBAL STATE: Track the current theme
+let currentTheme = 'human';
+
+/** * @typedef {Object} WeatherData
+ * ... (Your JSDoc is fine, keeping it hidden for brevity) ...
  */
 
 // 1. EVENT LISTENERS
@@ -23,8 +14,6 @@ document.getElementById('searchBar').addEventListener('keypress', function (e) {
 
 // 2. MAIN FUNCTION
 async function getWeather(defaultCity) {
-
-    // Input Logic: Use default city OR the value in the search bar
     const searchInput = document.getElementById('searchBar');
     const city = defaultCity || searchInput.value;
 
@@ -36,107 +25,128 @@ async function getWeather(defaultCity) {
     try {
         const response = await fetch(url);
         if (!response.ok) {
-            alert("City not found! Please check spelling.");
+            alert("City not found!");
             return;
         }
 
-        /** @type {WeatherData} */
         const data = await response.json();
 
-        // --- INJECTING DATA ---
-
-        // 1. Text Data
+        // --- INJECT STANDARD DATA ---
         document.getElementById('placeName').innerText = data.name;
         document.getElementById('tempBox').innerText = Math.round(data.main.temp);
         document.getElementById('feelsLike').innerText = Math.round(data.main.feels_like);
         document.getElementById('humidityBox').innerText = data.main.humidity;
         document.getElementById('windBox').innerText = data.wind.speed;
 
-        // 2. Description (Capitalized)
-        // "scattered clouds" -> "Scattered Clouds" for looks
+        // Description
         const desc = data.weather[0].description;
         document.getElementById('conditionText').innerText = desc.charAt(0).toUpperCase() + desc.slice(1);
 
-        // 3. Time Strings
+        // Time Strings
         document.getElementById('timeZone').innerText = new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
 
-        const sunriseTime = new Date(data.sys.sunrise * 1000).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
-        const sunsetTime = new Date(data.sys.sunset * 1000).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+        // Calculate Standard Times
+        const standardSunrise = new Date(data.sys.sunrise * 1000).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+        const standardSunset = new Date(data.sys.sunset * 1000).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
 
-        document.getElementById('sunriseBox').innerText = sunriseTime;
-        document.getElementById('sunsetBox').innerText = sunsetTime;
+        // --- THEME LOGIC FOR TEXT (The Fix) ---
+        // We set the default text first
+        let sunriseBox = standardSunrise;
+        let sunsetBox = standardSunset;
 
-        // 4. Dynamic Icon
+        // Then we override it if the theme matches
+        if (currentTheme === 'vampire') {
+            sunriseBox = 'Time to Coffin ⚰️';
+            sunsetBox = 'Feast Time 🩸';
+        }
+        else if (currentTheme === 'human') {
+            // Keep standard time, or add quote
+            sunriseBox = 'standardSunrise';
+            sunsetBox = 'Put away the garlic!';
+        }
+        else if (currentTheme === 'gloom') {
+            sunriseBox = 'Grow Garlic 🌱';
+        }
+
+        // Apply the final text to the HTML boxes
+        document.getElementById('sunriseBox').innerText = sunriseText;
+        document.getElementById('sunsetBox').innerText = sunsetText;
+
+
+        // Dynamic Icon
         const iconCode = data.weather[0].icon;
         const iconUrl = `https://openweathermap.org/img/wn/${iconCode}@4x.png`;
         document.getElementById('weatherIcon').innerHTML = `<img src="${iconUrl}" alt="Weather Icon" class="w-40 h-40 mx-auto drop-shadow-lg">`;
 
-        // 5. Cleanup (Clear the search bar if it was a manual search)
         if (!defaultCity) {
             searchInput.value = "";
         }
-
-        console.log("Weather updated for:", data.name);
 
     } catch (error) {
         console.error("Error:", error);
     }
 }
 
+// 3. THEME SYSTEM
 const themes = {
     vampire: {
-        useImage: true,
-        imagePath: "images/redMoon.jpg", 
-        targetId: "cardSunset",
-        accent: "border-red-500 bg-red-500/20"
+        imagePath: "images/redMoon.jpg",
+        targetId: "cardSunset", // Highlights Sunset card
+        accent: "border-red-500 bg-red-900/40"
     },
-    gardener: {
-        useImage: true,
+    human: {
         imagePath: "images/clear.jpg",
-        targetId: "cardSunrise",
+        targetId: "cardSunrise", // Highlights Sunrise card
         accent: "border-yellow-400 bg-yellow-500/30"
     },
-    surfer: {
-        useImage: true,
-        imagePath: "images/cloud.jpg", 
-        targetId: "cardWind",
+    gloom: {
+        imagePath: "images/cloud.jpg",
+        targetId: "cardWind", // Highlights Wind card
         accent: "border-purple-400 bg-purple-500/20"
     }
 };
 
 function setTheme(themeName) {
+    // 1. Update the Global Variable
+    currentTheme = themeName;
+
     const t = themes[themeName];
     if (!t) return;
-    
-    const body = document.body;
-    
-    // All themes use background images
-    body.style.backgroundImage = `url('${t.imagePath}')`;
-    body.style.backgroundSize = 'cover';
-    body.style.backgroundPosition = 'center';
-    body.style.backgroundAttachment = 'fixed';
 
-    // Reset all cards
+    // 2. Change Background
+    document.body.style.backgroundImage = `url('${t.imagePath}')`;
+    document.body.style.backgroundSize = 'cover';
+    document.body.style.backgroundPosition = 'center';
+    document.body.style.backgroundAttachment = 'fixed';
+
+    // 3. Reset all cards (Remove old borders)
+    // Note: You need to add these IDs (cardWind, cardSunrise, cardSunset) to your HTML divs!
     ['cardWind', 'cardSunrise', 'cardSunset'].forEach(id => {
         const el = document.getElementById(id);
         if (el) {
-            el.classList.remove('border-red-500', 'bg-red-500/20', 'border-yellow-400', 'bg-yellow-500/30', 'border-purple-400', 'bg-purple-500/20');
-            el.classList.add('border-transparent');
+            el.className = "glass rounded-[2rem] p-6 flex flex-col justify-center gap-6 flex-1 hover:bg-white/5 transition border border-white/5 relative overflow-hidden";
         }
     });
 
-    // Highlight active card
+    // 4. Highlight active card
     const activeCard = document.getElementById(t.targetId);
     if (activeCard) {
-        activeCard.classList.remove('border-transparent');
-        activeCard.classList.add(...t.accent.split(' '));
+        // Add the accent classes
+        activeCard.classList.remove('border-white/5'); // Remove default border
+        const classes = t.accent.split(' ');
+        activeCard.classList.add(...classes);
+    }
+
+    // 5. RE-RUN WEATHER to update the text immediately
+    // We grab the city that is currently on screen
+    const currentCity = document.getElementById('placeName').innerText;
+    if(currentCity !== "---") {
+        getWeather(currentCity);
     }
 }
 
-
-
-// Start standaard in Human mode
+// Start in Human mode
 setTheme('human');
 
-// 3. STARTUP CALL
+// Initial Load
 getWeather("Genk");
