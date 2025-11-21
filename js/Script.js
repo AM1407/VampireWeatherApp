@@ -56,6 +56,17 @@ async function getWeather(defaultCity) {
         let sunriseTitleText = "Sunrise";
         let sunsetTitleText = "Sunset";
 
+        let feelsLikeContent = Math.round(data.main.feels_like);
+
+        function bepaalPlantenHumeur(temp) {
+        if (temp < 0) return "Alles is dood. RIP. 💀";
+        if (temp < 5) return "Wortels bibberen 🥕";
+        if (temp < 15) return "Jas aan. Wied-weer 🧤";
+        if (temp < 22) return "Groeizaam! Slakken feest 🐌";
+        if (temp < 28) return "Tomaten worden rood! 🍅";
+        return "Sla schiet door! Oogsten! 🥵";
+        }
+
         // 2. Check the theme
         if (currentTheme === 'vampire') {
             // FIX: Fixed capitalization (TitleText, not Titletext)
@@ -65,6 +76,8 @@ async function getWeather(defaultCity) {
         else if (currentTheme === 'gardener') {
             sunriseTitleText = 'Start Planting 🧄';
             sunsetTitleText = 'Rest Time 💤';
+
+            feelsLikeContent = bepaalPlantenHumeur(realTemp);
         }
         else if (currentTheme === 'surfer') {
             sunriseTitleText = 'Catch Rays ☀️';
@@ -76,6 +89,7 @@ async function getWeather(defaultCity) {
         // FIX: Changed ID to 'sunriseLabel' to match your HTML
         document.getElementById('sunriseLabel').innerText = sunriseTitleText;
         document.getElementById('sunsetLabel').innerText = sunsetTitleText;
+        document.getElementById('feelsLike').innerText = feelsLikeContent;
 
 
         // Dynamic Icon
