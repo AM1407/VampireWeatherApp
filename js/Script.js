@@ -69,7 +69,7 @@ async function getWeather(defaultCity) {
 
         // 2. Check the theme
         if (currentTheme === 'vampire') {
-            // FIX: Fixed capitalization (TitleText, not Titletext)
+
             sunriseTitleText = 'Time to Coffin ⚰️';
             sunsetTitleText = 'Feast Time 🩸';
         }
@@ -120,7 +120,7 @@ const themes = {
         accent: "border-green-400 bg-green-500/30"
     },
     surfer: {
-        imagePath: "images/cloud.jpg",
+        imagePath: "images/fog.jpg",
         targetId: "cardWind",
         accent: "border-blue-400 bg-blue-500/20"
     }
@@ -131,26 +131,29 @@ function setTheme(themeName) {
     const t = themes[themeName];
     if (!t) return;
 
-    // Background
-    const bgDiv = document.getElementById('mainBg'); // I added an ID to your main div in HTML
-    if(bgDiv) {
-        // Using classes for background images is often better, but inline styles work too
-        // Ensure you have these images in your folder!
-    }
+    // 1. Background Image
+    document.body.style.backgroundImage = `url('${t.imagePath}')`;
+    document.body.style.backgroundSize = 'cover';
+    document.body.style.backgroundPosition = 'center';
+    document.body.style.backgroundAttachment = 'fixed';
 
-    // Reset cards
+    // 2. Reset Cards (The Fix is Here!)
     ['cardWind', 'cardSunrise', 'cardSunset'].forEach(id => {
         const el = document.getElementById(id);
         if (el) {
-            el.className = "glass rounded-[2rem] p-6 flex flex-col justify-center gap-1 flex-1 hover:bg-white/5 transition border border-white/5 relative overflow-hidden";
-            // For the Wind card specifically which has different flex layout:
-            if(id === 'cardWind') {
-                el.className = "glass rounded-[2rem] p-6 flex items-center justify-between flex-1 hover:bg-white/5 transition border border-white/5 relative overflow-hidden";
+            // Default styling for most cards
+            let newClass = "glass rounded-[2rem] p-6 flex flex-col justify-center gap-4 flex-1 hover:bg-white/5 transition border border-white/5 relative overflow-hidden";
+
+            // SPECIAL CASE: Wind, Sunrise, and Sunset need to be Side-by-Side (Row), not Stacked (Col)
+            if (id === 'cardWind' || id === 'cardSunrise' || id === 'cardSunset') {
+                newClass = "glass rounded-2xl p-4 flex items-center justify-between transition border border-white/5 relative overflow-hidden";
             }
+
+            el.className = newClass;
         }
     });
 
-    // Highlight active card
+    // 3. Highlight active card
     const activeCard = document.getElementById(t.targetId);
     if (activeCard) {
         activeCard.classList.remove('border-white/5');
@@ -158,7 +161,7 @@ function setTheme(themeName) {
         activeCard.classList.add(...classes);
     }
 
-    // Refresh text
+    // 4. Refresh text
     const currentCity = document.getElementById('placeName').innerText;
     if(currentCity !== "---") {
         getWeather(currentCity);
