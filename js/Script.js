@@ -66,15 +66,15 @@ async function getWeather(defaultCity) {
         }
         else if (currentTheme === 'gardener') {
             sunriseTitleText = 'Start Planting 🧄';
-            sunsetTitleText = 'Rest Time 💤';
+            sunsetTitleText = 'Take out the Wooden Stakes 🪓';
 
             // Logic: Calculate Plant Mood based on actual temperature
             // We pass 'data.main.temp' to the helper function
             feelsLikeContent = determinePlantMood(data.main.temp);
         }
         else if (currentTheme === 'surfer') {
-            sunriseTitleText = 'Catch Rays ☀️';
-            sunsetTitleText = 'Stash Board 🏄‍♂️';
+            sunriseTitleText = 'Catch Waves 🌊';
+            sunsetTitleText = 'Time to Stash the Board️ 🏄‍♂️';
             feelsLikeContent = determineSurferMood(data.main.temp);
         }
 
@@ -157,12 +157,12 @@ function setTheme(themeName) {
 
 // 4. HELPER FUNCTIONS (Moved outside!)
 function determinePlantMood(temp) {
-    if (temp < 0) return "Everything is dead. RIP. 💀";
-    if (temp < 5) return "Carrots are shivering 🥕";
+    if (temp < 0) return "Everything is frozen solid. RIP. 💀";
+    if (temp < 5) return "My carrot is shrinking 🥕";
     if (temp < 15) return "Put a coat on. Weeding weather 🧤";
     if (temp < 22) return "Good growing weather! Snail party 🐌";
     if (temp < 28) return "Tomatoes are turning red! 🍅";
-    return "Lettuce is bolting! Harvest now! 🥵";
+    return "Lettuce is on fire! Harvest now! 🥵";
 }
 
 function determineVampireMood(temp) {
@@ -175,12 +175,12 @@ function determineVampireMood(temp) {
 }
 
 function determineSurferMood(temp) {
-    if (temp < 0) return "Ocean is a slush puppy. Stay home 🥶";
-    if (temp < 10) return "Hood, booties, and thick wetsuit mandatory 🐧";
-    if (temp < 18) return "3/2mm wetsuit. Crisp and clean 🌊";
-    if (temp < 25) return "Spring suit or shorty! 🤙";
-    if (temp < 30) return "Boardshorts time! Sun's out guns out 👙";
-    return "The wax is melting off my board! 🫠";
+    if (temp < 0) return "Significant shrinkage warning. 🍤";
+    if (temp < 10) return "Wetsuit smells like pee, but at least it's warm. 🚽";
+    if (temp < 18) return "Nipples could cut glass right now. 🧊";
+    if (temp < 25) return "Speedo time. You're welcome, ladies. 🦅";
+    if (temp < 30) return "Sun's out, buns out. Watch the chafing. 🍑";
+    return "Sweating like a sinner in church. 🥵";
 }
 
 // Start in Gardener mode
