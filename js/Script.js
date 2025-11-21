@@ -155,13 +155,11 @@ function setTheme(themeName) {
 }
 
 
-// Helper: Converts degrees (360) to compass direction (N, NE, etc.)
+
 function getCompassDirection(degrees) {
     const directions = ['N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW'];
 
-    // 1. Divide degrees by 45 (360 / 8 = 45)
-    // 2. Round to nearest whole number
-    // 3. Use % 8 (Modulo) so 360 wraps back to 0 (North)
+
     const index = Math.round(degrees / 45) % 8;
 
     return directions[index];
