@@ -62,6 +62,7 @@ async function getWeather(defaultCity) {
         if (currentTheme === 'vampire') {
             sunriseTitleText = 'Time to Coffin ⚰️';
             sunsetTitleText = 'Feast Time 🩸';
+            feelsLikeContent = determineVampireMood(data.main.temp);
         }
         else if (currentTheme === 'gardener') {
             sunriseTitleText = 'Start Planting 🧄';
@@ -69,11 +70,12 @@ async function getWeather(defaultCity) {
 
             // Logic: Calculate Plant Mood based on actual temperature
             // We pass 'data.main.temp' to the helper function
-            feelsLikeContent = bepaalPlantenHumeur(data.main.temp);
+            feelsLikeContent = determinePlantMood(data.main.temp);
         }
         else if (currentTheme === 'surfer') {
             sunriseTitleText = 'Catch Rays ☀️';
             sunsetTitleText = 'Stash Board 🏄‍♂️';
+            feelsLikeContent = determineSurferMood(data.main.temp);
         }
 
         // C. Inject the Custom Text
@@ -154,13 +156,31 @@ function setTheme(themeName) {
 }
 
 // 4. HELPER FUNCTIONS (Moved outside!)
-function bepaalPlantenHumeur(temp) {
-    if (temp < 0) return "Alles is dood. RIP. 💀";
-    if (temp < 5) return "Wortels bibberen 🥕";
-    if (temp < 15) return "Jas aan. Wied-weer 🧤";
-    if (temp < 22) return "Groeizaam! Slakken feest 🐌";
-    if (temp < 28) return "Tomaten worden rood! 🍅";
-    return "Sla schiet door! Oogsten! 🥵";
+function determinePlantMood(temp) {
+    if (temp < 0) return "Everything is dead. RIP. 💀";
+    if (temp < 5) return "Carrots are shivering 🥕";
+    if (temp < 15) return "Put a coat on. Weeding weather 🧤";
+    if (temp < 22) return "Good growing weather! Snail party 🐌";
+    if (temp < 28) return "Tomatoes are turning red! 🍅";
+    return "Lettuce is bolting! Harvest now! 🥵";
+}
+
+function determineVampireMood(temp) {
+    if (temp < 0) return "My blood slushie is frozen solid 🍧";
+    if (temp < 10) return "Lovely coffin weather. Chill to the bone ⚰️";
+    if (temp < 20) return "Perfect night for a bite. Crisp air 🦇";
+    if (temp < 30) return "This heavy cape is making me sweat 💦";
+    if (temp < 100) return "I am turning to ash! Hiss! 🔥";
+    return "Holy water steam bath! ✝️";
+}
+
+function determineSurferMood(temp) {
+    if (temp < 0) return "Ocean is a slush puppy. Stay home 🥶";
+    if (temp < 10) return "Hood, booties, and thick wetsuit mandatory 🐧";
+    if (temp < 18) return "3/2mm wetsuit. Crisp and clean 🌊";
+    if (temp < 25) return "Spring suit or shorty! 🤙";
+    if (temp < 30) return "Boardshorts time! Sun's out guns out 👙";
+    return "The wax is melting off my board! 🫠";
 }
 
 // Start in Gardener mode
