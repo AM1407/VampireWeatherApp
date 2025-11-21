@@ -111,7 +111,7 @@ const themes = {
         accent: "border-green-400 bg-green-500/30"
     },
     surfer: {
-        imagePath: "images/fog.jpg",
+        imagePath: "images/waves2.jpg",
         targetId: "cardWind",
         accent: "border-blue-400 bg-blue-500/20"
     }
