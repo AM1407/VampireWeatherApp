@@ -55,7 +55,7 @@ async function getWeather(defaultCity) {
 // Theme-specific adjustments
         let sunriseTitleText = "Sunrise";
         let sunsetTitleText = "Sunset";
-        // Default content for 'Feels Like' is just the number
+
         let feelsLikeContent = Math.round(data.main.feels_like);
 
 
@@ -155,7 +155,7 @@ function setTheme(themeName) {
 }
 
 
-
+// Convert wind degrees to compass direction
 function getCompassDirection(degrees) {
     const directions = ['N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW'];
 
