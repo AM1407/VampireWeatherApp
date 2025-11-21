@@ -58,7 +58,7 @@ async function getWeather(defaultCity) {
 
         // 2. Check the theme
         if (currentTheme === 'vampire') {
-            // FIX: Fixed capitalization (TitleText, not Titletext)
+
             sunriseTitleText = 'Time to Coffin ⚰️';
             sunsetTitleText = 'Feast Time 🩸';
         }
@@ -117,24 +117,25 @@ function setTheme(themeName) {
     const t = themes[themeName];
     if (!t) return;
 
-    // 1. FIX: Apply the background image to the Body or Main Div
-    // We target the body to ensure it covers the whole screen
+    // 1. Background Image
     document.body.style.backgroundImage = `url('${t.imagePath}')`;
     document.body.style.backgroundSize = 'cover';
     document.body.style.backgroundPosition = 'center';
     document.body.style.backgroundAttachment = 'fixed';
 
-    // 2. Reset cards
+    // 2. Reset Cards (The Fix is Here!)
     ['cardWind', 'cardSunrise', 'cardSunset'].forEach(id => {
         const el = document.getElementById(id);
         if (el) {
-            // Reset to default glass style
-            el.className = "glass rounded-[2rem] p-6 flex flex-col justify-center gap-4 flex-1 hover:bg-white/5 transition border border-white/5 relative overflow-hidden";
+            // Default styling for most cards
+            let newClass = "glass rounded-[2rem] p-6 flex flex-col justify-center gap-4 flex-1 hover:bg-white/5 transition border border-white/5 relative overflow-hidden";
 
-            // Fix layout specifically for Wind card (which is horizontal, not vertical)
-            if(id === 'cardWind') {
-                el.className = "glass rounded-[2rem] p-6 flex items-center justify-between flex-1 hover:bg-white/5 transition border border-white/5 relative overflow-hidden";
+            // SPECIAL CASE: Wind, Sunrise, and Sunset need to be Side-by-Side (Row), not Stacked (Col)
+            if (id === 'cardWind' || id === 'cardSunrise' || id === 'cardSunset') {
+                newClass = "glass rounded-2xl p-4 flex items-center justify-between transition border border-white/5 relative overflow-hidden";
             }
+
+            el.className = newClass;
         }
     });
 
@@ -146,7 +147,7 @@ function setTheme(themeName) {
         activeCard.classList.add(...classes);
     }
 
-    // 4. Refresh text immediately
+    // 4. Refresh text
     const currentCity = document.getElementById('placeName').innerText;
     if(currentCity !== "---") {
         getWeather(currentCity);
