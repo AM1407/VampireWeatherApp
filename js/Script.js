@@ -106,7 +106,7 @@ const themes = {
         accent: "border-green-400 bg-green-500/30"
     },
     surfer: {
-        imagePath: "images/cloud.jpg",
+        imagePath: "images/fog.jpg",
         targetId: "cardWind",
         accent: "border-blue-400 bg-blue-500/20"
     }
@@ -117,26 +117,28 @@ function setTheme(themeName) {
     const t = themes[themeName];
     if (!t) return;
 
-    // Background
-    const bgDiv = document.getElementById('mainBg'); // I added an ID to your main div in HTML
-    if(bgDiv) {
-        // Using classes for background images is often better, but inline styles work too
-        // Ensure you have these images in your folder!
-    }
+    // 1. FIX: Apply the background image to the Body or Main Div
+    // We target the body to ensure it covers the whole screen
+    document.body.style.backgroundImage = `url('${t.imagePath}')`;
+    document.body.style.backgroundSize = 'cover';
+    document.body.style.backgroundPosition = 'center';
+    document.body.style.backgroundAttachment = 'fixed';
 
-    // Reset cards
+    // 2. Reset cards
     ['cardWind', 'cardSunrise', 'cardSunset'].forEach(id => {
         const el = document.getElementById(id);
         if (el) {
-            el.className = "glass rounded-[2rem] p-6 flex flex-col justify-center gap-1 flex-1 hover:bg-white/5 transition border border-white/5 relative overflow-hidden";
-            // For the Wind card specifically which has different flex layout:
+            // Reset to default glass style
+            el.className = "glass rounded-[2rem] p-6 flex flex-col justify-center gap-4 flex-1 hover:bg-white/5 transition border border-white/5 relative overflow-hidden";
+
+            // Fix layout specifically for Wind card (which is horizontal, not vertical)
             if(id === 'cardWind') {
                 el.className = "glass rounded-[2rem] p-6 flex items-center justify-between flex-1 hover:bg-white/5 transition border border-white/5 relative overflow-hidden";
             }
         }
     });
 
-    // Highlight active card
+    // 3. Highlight active card
     const activeCard = document.getElementById(t.targetId);
     if (activeCard) {
         activeCard.classList.remove('border-white/5');
@@ -144,7 +146,7 @@ function setTheme(themeName) {
         activeCard.classList.add(...classes);
     }
 
-    // Refresh text
+    // 4. Refresh text immediately
     const currentCity = document.getElementById('placeName').innerText;
     if(currentCity !== "---") {
         getWeather(currentCity);
